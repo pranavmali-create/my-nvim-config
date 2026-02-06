@@ -32,7 +32,7 @@ vim.keymap.set("n", "<leader>Y", [["+Y]])
 vim.keymap.set({ "n", "v" }, "<leader>d", '"_d')
 
 vim.keymap.set("n", "Q", "<nop>")
-vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux_sessionizer<CR>")
+vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww script-tmux<CR>")
 vim.keymap.set("n", "<leader>fm", vim.lsp.buf.format)
 
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
@@ -62,6 +62,6 @@ end, { desc = "Toggle inline diagnostics" })
 -- end)
 
 -- live-preview keymaps
-vim.keymap.set( "n", "<leader>sl", ":LivePreview start<CR>", { silent = false })
-vim.keymap.set( "n", "<leader>csl", ":LivePreview close<CR>", { silent = false })
+-- vim.keymap.set( "n", "<leader>sl", ":LivePreview start<CR>", { silent = false })
+-- vim.keymap.set( "n", "<leader>csl", ":LivePreview close<CR>", { silent = false })
 
