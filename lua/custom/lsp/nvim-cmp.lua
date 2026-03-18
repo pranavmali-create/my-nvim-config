@@ -54,7 +54,7 @@ return {
 				["<C-b>"] = cmp.mapping.scroll_docs(-4),
 				["<C-f>"] = cmp.mapping.scroll_docs(4),
 				["<C-e>"] = cmp.mapping.abort(),
-				["<C-y>"] = cmp.mapping.confirm({ select = true }), -- Only Ctrl+y confirms
+				-- ["<C-y>"] = cmp.mapping.confirm({ select = true }), -- Only Ctrl+y confirms
 				["<Return>"] = cmp.mapping.confirm({ select = true }), -- Only Ctrl+y confirms
 				["<CR>"] = cmp.mapping(function(fallback)
 					-- Enter key does NOT confirm completion, just fallback to normal behavior
