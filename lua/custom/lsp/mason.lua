@@ -20,7 +20,6 @@ return {
 				"ts_ls",
 				"html",
 				"cssls",
-				"tailwindcss",
 				"gopls",
 				"tailwindcss",
 				"emmet_ls",
