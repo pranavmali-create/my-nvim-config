@@ -1,33 +1,80 @@
 return {
-	{
-		"nvim-treesitter/nvim-treesitter",
-		event = { "BufReadPre", "BufNewFile" },
-		build = ":TSUpdate",
-		config = function()
-			local treesitter = require("nvim-treesitter.configs")
+  {
+    "nvim-treesitter/nvim-treesitter",
+    event = { "BufReadPre", "BufNewFile" },
+    build = ":TSUpdate",
 
-			treesitter.setup({
+    config = function()
+      local ts = require("nvim-treesitter")
 
-				ensure_installed = { "javascript", "typescript", "html", "css", "yaml" },
+      ts.setup({})
 
-				highlight = {
-					enable = true,
+      local ensure_installed = {
+        "javascript",
+        "typescript",
+        "html",
+        "css",
+        "yaml",
+      }
 
-					disable = { "c", "rust" },
-					disable = function(lang, buf)
-						local max_filesize = 100 * 1024 -- 100 KB
-						local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-						if ok and stats and stats.size > max_filesize then
-							return true
-						end
-					end,
+      ts.install(ensure_installed, { async = true })
 
-					additional_vim_regex_highlighting = false,
-				},
+      local function is_installed(lang)
+        local installed = require("nvim-treesitter.config").get_installed()
+        return vim.tbl_contains(installed, lang)
+      end
 
-				indent = { enable = true },
-				auto_install = true,
-			})
-		end,
-	},
+      local lang_blocklist = {
+        oil = true,
+        ["nvim-undotree"] = true,
+      }
+
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function(args)
+          local buf = args.buf
+
+          if vim.bo[buf].buftype ~= "" then
+            return
+          end
+
+          if vim.api.nvim_buf_get_name(buf) == "" then
+            return
+          end
+
+          local ft = vim.bo[buf].filetype
+          if ft == "" then
+            return
+          end
+
+          local lang = vim.treesitter.language.get_lang(ft)
+          if not lang then
+            return
+          end
+
+          if lang_blocklist[lang] then
+            return
+          end
+
+          local ok, parser_configs = pcall(require, "nvim-treesitter.parsers")
+          if ok and not parser_configs[lang] then
+            return
+          end
+
+          if not is_installed(lang) then
+            ts.install(lang, { async = true })
+            return
+          end
+
+          pcall(vim.treesitter.start, buf, lang)
+
+          if ft ~= "yaml" and ft ~= "markdown" then
+            vim.bo[buf].indentexpr =
+            "v:lua.require'nvim-treesitter'.indentexpr()"
+            vim.bo[buf].smartindent = false
+            vim.bo[buf].cindent = false
+          end
+        end,
+      })
+    end,
+  },
 }
